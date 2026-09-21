@@ -10,23 +10,158 @@ Redis stores live object state, Redis GEO stores the spatial index, and Redis li
 
 ## Requirements
 
+### Local execution
+
 - Java 21+
 - Maven 3.9+
-- Docker / Docker Compose
+- Redis 8+ (or a compatible Redis version)
 
-## Run Redis
+### Docker execution
+
+- Docker Engine or Docker Desktop
+- Docker Compose v2 (`docker compose`)
+
+## Run with Docker Compose (Recommended)
+
+The Docker Compose setup runs both the Spring Boot application and Redis in separate containers on the same Docker network.
+
+### 1. Build and start the application
+
+From the project root (the directory containing `pom.xml`, `Dockerfile`, and `docker-compose.yml`), run:
+
+```bash
+docker compose up --build
+```
+
+To run in the background:
+
+```bash
+docker compose up --build -d
+```
+
+The application will be available at:
+
+```text
+http://localhost:8080
+```
+
+Redis will be accessible from the host at:
+
+```text
+localhost:6379
+```
+
+Inside Docker Compose, the application connects to Redis using the service hostname `redis`, not `localhost`.
+
+The relevant environment configuration is:
+
+```yaml
+environment:
+  REDIS_HOST: redis
+  REDIS_PORT: 6379
+  SERVER_PORT: 8080
+```
+
+### 2. Check container status
+
+```bash
+docker compose ps
+```
+
+### 3. View application logs
+
+```bash
+docker compose logs -f app
+```
+
+View Redis logs:
+
+```bash
+docker compose logs -f redis
+```
+
+View logs for all services:
+
+```bash
+docker compose logs -f
+```
+
+### 4. Test Redis connectivity
+
+```bash
+docker exec -it tracklet-sim-redis redis-cli ping
+```
+
+Expected output:
+
+```text
+PONG
+```
+
+### 5. Stop the containers
+
+```bash
+docker compose down
+```
+
+This stops and removes the containers while preserving the named Redis volume.
+
+To remove the containers and delete the Redis data volume:
+
+```bash
+docker compose down -v
+```
+
+> Warning: `docker compose down -v` deletes the persisted Redis data.
+
+### 6. Rebuild after source changes
+
+After changing Java code or resources, rebuild the image:
+
+```bash
+docker compose up --build -d
+```
+
+To force a clean image rebuild:
+
+```bash
+docker compose build --no-cache
+
+docker compose up -d
+```
+
+## Run locally with Redis in Docker
+
+This workflow is useful during development when you want to run the Spring Boot application directly from IntelliJ IDEA and run only Redis in Docker.
+
+Start Redis:
 
 ```bash
 docker compose up -d redis
 ```
 
-## Run the application
+Run the application from IntelliJ IDEA or with Maven:
 
 ```bash
 mvn spring-boot:run
 ```
 
-Or build a jar:
+The local application must connect to Redis using `localhost`:
+
+```text
+REDIS_HOST=localhost
+REDIS_PORT=6379
+```
+
+## Run locally without Docker
+
+Start a locally installed Redis instance, then run:
+
+```bash
+mvn spring-boot:run
+```
+
+Or build and run the JAR:
 
 ```bash
 mvn clean package
@@ -49,7 +184,7 @@ Get a fleet:
 GET http://localhost:8080/api/v1/public/fleets/aerial
 ```
 
-Get live objects inside a bbox. The bbox order is **minLon,minLat,maxLon,maxLat**:
+Get live objects inside a bounding box. The `bbox` order is **minLon,minLat,maxLon,maxLat**:
 
 ```http
 GET http://localhost:8080/api/v1/public/fleets/aerial/live-state?bbox=51.20,35.60,51.60,35.85

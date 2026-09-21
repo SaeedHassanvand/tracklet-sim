@@ -1,0 +1,24 @@
+### List fleets
+GET http://localhost:8080/api/v1/public/fleets
+
+### Get aerial fleet
+GET http://localhost:8080/api/v1/public/fleets/aerial
+
+### Get aerial live objects in Tehran bbox
+GET http://localhost:8080/api/v1/public/fleets/aerial/live-state?bbox=51.20,35.60,51.60,35.85
+
+### Get BRT live objects in Tehran bbox
+GET http://localhost:8080/api/v1/public/fleets/brt/live-state?bbox=51.20,35.60,51.60,35.85
+
+### Get motorcycle live objects in Tehran bbox
+GET http://localhost:8080/api/v1/public/fleets/motorcycle/live-state?bbox=51.20,35.60,51.60,35.85
+
+### Replace {objectId} with an object id returned by a live-state request
+GET http://localhost:8080/api/v1/public/fleets/aerial/objects/{objectId}
+
+### Get trajectory
+GET http://localhost:8080/api/v1/public/fleets/aerial/objects/{objectId}/trajectory
+
+### Conditional object request after receiving ETag
+GET http://localhost:8080/api/v1/public/fleets/aerial/objects/{objectId}
+If-None-Match: "42"

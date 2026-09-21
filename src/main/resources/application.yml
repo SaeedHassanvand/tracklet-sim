@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: tracklet-sim
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 2s
+
+server:
+  port: ${SERVER_PORT:8080}
+
+simulator:
+  enabled: true
+  engine-tick-ms: 1000
+  lifecycle-tick-ms: 1000
+  trajectory-max-points: 300
+  fleets:
+    aerial:
+      enabled: true
+      object-count: 100
+      update-interval-ms: 1000
+      observation-drop-rate: 0.02
+      min-speed-kmh: 550
+      max-speed-kmh: 900
+      min-altitude-ft: 18000
+      max-altitude-ft: 41000
+      network-delay-ms: 0
+    brt:
+      enabled: true
+      object-count: 30
+      update-interval-ms: 2000
+      observation-drop-rate: 0.01
+      min-speed-kmh: 8
+      max-speed-kmh: 55
+      min-altitude-ft: 0
+      max-altitude-ft: 0
+      network-delay-ms: 0
+    motorcycle:
+      enabled: true
+      object-count: 100
+      update-interval-ms: 1000
+      observation-drop-rate: 0.015
+      min-speed-kmh: 5
+      max-speed-kmh: 70
+      min-altitude-ft: 0
+      max-altitude-ft: 0
+      network-delay-ms: 0
+  lifecycle:
+    stale-threshold: 10s
+    lost-threshold: 30s
